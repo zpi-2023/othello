@@ -5,6 +5,7 @@ from message import Message
 
 SCOPE_NAME = "othello"
 SERVER_UID = "server"
+BROADCAST = "*"
 
 
 class Connection(ABC):
@@ -20,6 +21,7 @@ class Connection(ABC):
         self._on_connect()
         self._client.loop_start()
         self._client.subscribe(f"{SCOPE_NAME}/+/{self._uid}/+")
+        self._client.subscribe(f"{SCOPE_NAME}/+/{BROADCAST}/+")
         print(f"[INFO] Connection ({self._uid}) opened!")
         return self
 
@@ -35,14 +37,17 @@ class Connection(ABC):
     def _on_disconnect(self) -> None:
         pass
 
-    def _is_message_invalid(self, message: Message) -> bool:
+    def _is_message_invalid(self, _message: Message) -> bool:
         return False
 
     def _on_message(self, _client: mqtt.Client, _userdata: Any, data: Any) -> None:
         (scope, sender, receiver, tag) = data.topic.split("/")
         content = str(data.payload.decode("utf-8"))
 
-        if scope != SCOPE_NAME or receiver != self._uid:
+        if scope == SCOPE_NAME and sender == self._uid and receiver == BROADCAST:
+            return  # Silently drop valid broadcasts from self
+
+        if scope != SCOPE_NAME or sender == self._uid or (receiver != self._uid and receiver != BROADCAST):
             print(f"[WARNING] Dropping invalid topic: {data.topic}")
             return
 
@@ -86,5 +91,8 @@ class ServerConnection(Connection):
     def __init__(self, broker_address: str) -> None:
         super().__init__(broker_address, SERVER_UID)
 
-    def _is_message_invalid(self, message: Message) -> bool:
-        return message.sender == SERVER_UID
+    def send_to_client(self, client_uid: str, tag: str, content: Optional[str] = None) -> None:
+        self._send_message(client_uid, tag, content)
+
+    def broadcast(self, tag: str, content: Optional[str] = None) -> None:
+        self._send_message(BROADCAST, tag, content)

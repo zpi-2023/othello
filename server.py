@@ -13,7 +13,7 @@ def main():
                 case "disconnected":
                     clients.discard(message.sender)
 
-        print(f"Two clients connected: {clients}")
+        connection.broadcast("game-started")
 
 
 if __name__ == "__main__":
