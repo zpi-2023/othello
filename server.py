@@ -1,36 +1,19 @@
-import paho.mqtt.client as mqtt
-from message import Message
-
-BROKER = "localhost"
-
-clients = set()
-
-
-def on_message(_client, _userdata, data):
-    msg = Message.parse(data)
-
-    match msg.tag:
-        case "connected":
-            if len(clients) < 2:
-                clients.add(msg.sender)
-        case "disconnected":
-            clients.discard(msg.sender)
+from connection import ServerConnection
 
 
 def main():
-    server = mqtt.Client("server")
-    server.on_message = on_message
-    server.connect(BROKER)
-    server.loop_start()
-    server.subscribe("othello/+/server/+")
+    with ServerConnection("localhost") as connection:
+        clients = set()
 
-    while len(clients) < 2:
-        pass
+        while len(clients) < 2:
+            message = connection.receive_message()
+            match message.tag:
+                case "connected":
+                    clients.add(message.sender)
+                case "disconnected":
+                    clients.discard(message.sender)
 
-    print(f"Two clients connected: {clients}")
-
-    server.loop_stop()
-    server.disconnect()
+        print(f"Two clients connected: {clients}")
 
 
 if __name__ == "__main__":

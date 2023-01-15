@@ -8,12 +8,5 @@ class Message:
     tag: str
     content: str
 
-    @staticmethod
-    def parse(data):
-        content = str(data.payload.decode("utf-8"))
-        (app, sender, receiver, tag) = data.topic.split("/")
-        if app != "othello":
-            print(f"[WARNING] Unknown topic detected: {data.topic}")
-        msg = Message(sender, receiver, tag, content)
-        print(f"[INFO] {msg}")
-        return msg
+    def __str__(self) -> str:
+        return f"({self.sender})->({self.receiver}) [{self.tag}]: \"{self.content}\""
