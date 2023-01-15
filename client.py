@@ -7,11 +7,8 @@ def main():
     client_id = str(uuid.uuid4()).replace("-", "")[:16]
 
     with ClientConnection("localhost", client_id) as connection:
-        try:
-            while True:
-                pass
-        except KeyboardInterrupt:
-            pass
+        connection.receive_message()
+        # TODO: main game loop
 
 
 if __name__ == "__main__":

@@ -15,6 +15,8 @@ def main():
 
         connection.broadcast("game-started")
 
+        # TODO: main game loop
+
 
 if __name__ == "__main__":
     main()
