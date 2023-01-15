@@ -1,12 +1,12 @@
 import paho.mqtt.client as mqtt
 import uuid
-from util import parse_message
+from message import Message
 
-broker = "localhost"
+BROKER = "localhost"
 
 
 def on_message(_client, _userdata, data):
-    sender, tag, msg = parse_message(data)
+    msg = Message.parse(data)
 
 
 def main():
@@ -15,7 +15,7 @@ def main():
 
     client = mqtt.Client(client_id)
     client.on_message = on_message
-    client.connect(broker)
+    client.connect(BROKER)
     client.publish(f"othello/{client_id}/server/connected")
     client.loop_start()
     client.subscribe(f"othello/server/{client_id}/+")
