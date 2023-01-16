@@ -1,4 +1,5 @@
 import sys
+from config import *
 from connection import ClientConnection, LOCALHOST
 from board import Board
 from lib.oled.SSD1331 import SSD1331
