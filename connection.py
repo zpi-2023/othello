@@ -1,4 +1,4 @@
-from typing import Self, Any, Optional
+from typing import Any, Optional
 from abc import ABC
 from collections import deque
 import paho.mqtt.client as mqtt
@@ -17,7 +17,7 @@ class Connection(ABC):
         self._uid = uid
         self._message_queue: deque[Message] = deque()
 
-    def __enter__(self) -> Self:
+    def __enter__(self):
         self._client.on_message = self._on_message
         self._client.connect(self._broker_address)
         print(f"[INFO] Connection ({self._uid}) to \"{self._broker_address}\" opened!")
