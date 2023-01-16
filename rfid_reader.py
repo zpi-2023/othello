@@ -16,5 +16,4 @@ class RfidReader:
             if status != self._reader.MI_OK:
                 continue
 
-            return ''.join(uid)
-
+            return ''.join(str(elem) for elem in uid)
