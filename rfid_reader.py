@@ -4,7 +4,7 @@ from mfrc522 import MFRC522
 
 class RfidReader:
     def __init__(self) -> None:
-        _reader = MFRC522()
+        self._reader = MFRC522()
 
     def read_uid(self) -> str:
         while True:
