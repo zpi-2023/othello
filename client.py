@@ -17,6 +17,7 @@ def game_loop(connection: ClientConnection, display: SSD1331):
 
 def main():
     display = SSD1331()
+    display.Init()
     display.clear()
 
     broker_address = sys.argv[1] if len(sys.argv) > 1 else LOCALHOST
