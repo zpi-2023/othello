@@ -17,12 +17,15 @@ def game_loop(connection: ClientConnection, display: SSD1331):
 
 def main():
     display = SSD1331()
+    rfid_reader = RfidReader()
+
     display.Init()
     display.clear()
 
     broker_address = sys.argv[1] if len(sys.argv) > 1 else LOCALHOST
-    rfid_reader = RfidReader()
+    
     # TODO: print message that we are waiting for rfid
+    print("[INFO] Waiting for rfid card...")
     client_id = rfid_reader.read_uid()
 
     with ClientConnection(broker_address, client_id) as connection:
