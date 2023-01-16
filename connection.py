@@ -21,10 +21,10 @@ class Connection(ABC):
         self._client.on_message = self._on_message
         self._client.connect(self._broker_address)
         print(f"[INFO] Connection ({self._uid}) to \"{self._broker_address}\" opened!")
-        self._on_connect()
         self._client.loop_start()
         self._client.subscribe(f"{SCOPE_NAME}/+/{self._uid}/+")
         self._client.subscribe(f"{SCOPE_NAME}/+/{BROADCAST}/+")
+        self._on_connect()
         return self
 
     def __exit__(self, *_) -> None:
