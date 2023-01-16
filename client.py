@@ -8,11 +8,10 @@ from rfid_reader import RfidReader
 def game_loop(connection: ClientConnection, display: SSD1331):
     while True:
         message = connection.receive_message()
-        match message.tag:
-            case "board":
-                board = Board.deserialize(message.content)
-                image = board.to_image()
-                display.ShowImage(image, 0, 0)
+        if message.tag == "board":
+            board = Board.deserialize(message.content)
+            image = board.to_image()
+            display.ShowImage(image, 0, 0)
 
 
 def main():

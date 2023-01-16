@@ -19,13 +19,12 @@ class Tile(Enum):
 
     @property
     def image(self) -> Optional[Image.Image]:
-        match self:
-            case Tile.EMPTY:
-                return None
-            case Tile.BLACK:
-                return BLACK_IMAGE
-            case Tile.WHITE:
-                return WHITE_IMAGE
+        if self == Tile.BLACK:
+            return BLACK_IMAGE
+        elif self == Tile.WHITE:
+            return WHITE_IMAGE
+        else:
+            return None
 
 
 class Board:

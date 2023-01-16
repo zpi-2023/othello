@@ -8,11 +8,10 @@ def wait_for_players(connection: ServerConnection) -> dict[Tile, str]:
 
     while len(clients) < 2:
         message = connection.receive_message()
-        match message.tag:
-            case "connected":
-                clients.add(message.sender)
-            case "disconnected":
-                clients.discard(message.sender)
+        if message.tag == "connected":
+            clients.add(message.sender)
+        elif message.tag == "disconnected":
+            clients.discard(message.sender)
 
     white_uid = clients.pop()
     black_uid = clients.pop()
@@ -27,14 +26,12 @@ def game_loop(connection: ServerConnection, players: dict[Tile, str]):
         connection.broadcast("board", board.serialize())
 
         message = connection.receive_message()
-        match message.tag:
-            case "disconnected":
-                if message.sender in players.values:
-                    pass
-                    # TODO: game over, second player wins
-            case "place":
-                pass
-                # TODO: place tile on board
+        if message.tag == "disconnected" and message.sender in players.values:
+            pass
+            # TODO: game over, second player wins
+        elif message.tag == "place":
+            pass
+            # TODO: place tile on board
 
 
 def main():
