@@ -1,12 +1,7 @@
-import uuid
 import sys
 from connection import ClientConnection, LOCALHOST
 from board import Board
-
-
-def read_client_id() -> str:
-    # TODO: read real id from RFID
-    return str(uuid.uuid4()).replace("-", "")[:16]
+from rfid_reader import RfidReader
 
 
 def game_loop(connection: ClientConnection):
@@ -21,7 +16,10 @@ def game_loop(connection: ClientConnection):
 
 def main():
     broker_address = sys.argv[1] if len(sys.argv) > 1 else LOCALHOST
-    client_id = read_client_id()
+    rfid_reader = RfidReader();
+    # TODO: print message that we are waiting for rfid
+    rfid_reader.wait_for_read();
+    client_id = rfid_reader.get_uid();
 
     with ClientConnection(broker_address, client_id) as connection:
         game_loop(connection)
