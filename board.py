@@ -54,7 +54,7 @@ class Board:
 
         # TODO: draw scores and something else in the right panel
 
-        return image
+        return image.convert("RGB")
 
     def serialize(self) -> str:
         return "|".join("".join(c.value for c in r) for r in self._board)
