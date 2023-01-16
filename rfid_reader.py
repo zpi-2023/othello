@@ -1,4 +1,3 @@
-import uuid
 from mfrc522 import MFRC522
 
 
