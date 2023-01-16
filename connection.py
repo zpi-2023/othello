@@ -7,6 +7,7 @@ from message import Message
 SCOPE_NAME = "othello"
 SERVER_UID = "server"
 BROADCAST = "*"
+LOCALHOST = "localhost"
 
 
 class Connection(ABC):
@@ -19,7 +20,7 @@ class Connection(ABC):
     def __enter__(self) -> Self:
         self._client.on_message = self._on_message
         self._client.connect(self._broker_address)
-        print(f"[INFO] Connection ({self._uid}) opened!")
+        print(f"[INFO] Connection ({self._uid}) to \"{self._broker_address}\" opened!")
         self._on_connect()
         self._client.loop_start()
         self._client.subscribe(f"{SCOPE_NAME}/+/{self._uid}/+")
@@ -58,15 +59,13 @@ class Connection(ABC):
             print(f"[WARNING] Dropping invalid message: {message}")
             return
 
-        print(f"[INFO] {message}")
+        print(f"[DEBUG] {message}")
 
         self._message_queue.append(message)
 
     def _send_message(self, receiver: str, tag: str, content: Optional[str] = None) -> None:
-        print(f"[INFO] {Message(self._uid, receiver, tag, content or '')}")
-        self._client.publish(
-            "/".join([SCOPE_NAME, self._uid, receiver, tag]),
-            content)
+        print(f"[DEBUG] {Message(self._uid, receiver, tag, content or '')}")
+        self._client.publish("/".join([SCOPE_NAME, self._uid, receiver, tag]), content)
 
     def receive_message(self) -> Message:
         while not any(self._message_queue):
@@ -90,8 +89,8 @@ class ClientConnection(Connection):
 
 
 class ServerConnection(Connection):
-    def __init__(self, broker_address: str) -> None:
-        super().__init__(broker_address, SERVER_UID)
+    def __init__(self) -> None:
+        super().__init__(LOCALHOST, SERVER_UID)
 
     def send_to_client(self, client_uid: str, tag: str, content: Optional[str] = None) -> None:
         self._send_message(client_uid, tag, content)

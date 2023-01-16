@@ -2,7 +2,7 @@ from connection import ServerConnection
 
 
 def main():
-    with ServerConnection("localhost") as connection:
+    with ServerConnection() as connection:
         clients = set()
 
         while len(clients) < 2:
