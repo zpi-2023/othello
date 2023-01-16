@@ -26,6 +26,14 @@ class Tile(Enum):
         else:
             return None
 
+    def opposite(self) -> Tile:
+        if self == Tile.BLACK:
+            return Tile.WHITE
+        elif self == Tile.WHITE:
+            return Tile.BLACK
+        else:
+            raise ValueError()
+
 
 class Board:
     def __init__(self) -> None:
@@ -67,6 +75,23 @@ class Board:
             for c, tile in enumerate(tiles):
                 board._board[r][c] = Tile(tile)
         return board
+
+    def rows_with_valid_moves(self, color: Tile) -> list[int]:
+        # TODO: return only row indices, where there is at least one valid move for color
+        return list(range(BOARD_SIZE))
+
+    def tiles_with_valid_move(self, color: Tile, row: int) -> list[int]:
+        # TODO: return only tile indices for valid moves
+        return list(range(BOARD_SIZE))
+
+    def place(self, row: int, col: int, color: Tile) -> None:
+        # TODO: validate move
+        self._board[row][col] = color
+        # TODO: flip other tiles
+
+    def scores(self) -> dict[Tile, int]:
+        # TODO: count placed tiles for each color
+        return {Tile.BLACK: 0, Tile.WHITE: 0}
 
     def winner(self) -> Tile:
         # TODO: check win conditions
