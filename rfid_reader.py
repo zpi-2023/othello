@@ -19,4 +19,4 @@ class RfidReader:
             return self.uid_to_string(uid)
 
     def uid_to_str(self, uid) -> str:
-        return '-'.join(uid)
+        return ''.join(uid)
