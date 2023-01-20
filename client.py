@@ -13,6 +13,7 @@ def game_loop(channel: ClientChannel, display: Display):
             # TODO: handle deserialization errors
             board = Board.deserialize(message.content)
             display.draw(board.to_image())
+            channel.send_to_server("board-ack")
         elif message.tag == "your-turn":
             color = Tile(message.content)
             rows = board.rows_with_valid_moves(color)

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any, Optional, Callable
 from abc import ABC
 from collections import deque
 import paho.mqtt.client as mqtt
@@ -16,6 +16,10 @@ class Message:
     receiver: str
     tag: str
     content: str
+
+    @property
+    def topic(self) -> str:
+        return "/".join([SCOPE_NAME, self.sender, self.receiver, self.tag])
 
     def __str__(self) -> str:
         return f"({self.sender})->({self.receiver}) [{self.tag}]: \"{self.content}\""
@@ -75,14 +79,19 @@ class AbstractChannel(ABC):
         self._mailbox.append(message)
 
     def _send_message(self, receiver: str, tag: str, content: Optional[str] = None) -> None:
-        print(f"[DEBUG] {Message(self._uid, receiver, tag, content or '')}")
-        self._client.publish("/".join([SCOPE_NAME, self._uid, receiver, tag]), content)
+        message = Message(self._uid, receiver, tag, content or '')
+        print(f"[DEBUG] {message}")
+        self._client.publish(message.topic, message.content)
+
+    def receive_matching(self, condition: Callable[[Message], bool]) -> Message:
+        while True:
+            for message in self._mailbox:
+                if condition(message):
+                    self._mailbox.remove(message)
+                    return message
 
     def receive_any(self) -> Message:
-        while not any(self._mailbox):
-            pass
-
-        return self._mailbox.popleft()
+        return self.receive_matching(lambda _message: True)
 
 
 class ClientChannel(AbstractChannel):
