@@ -1,14 +1,14 @@
 import sys
-from connection import ClientConnection, LOCALHOST
+from netcode import ClientChannel, LOCALHOST
 from board import Board, Tile
 from rfid_reader import RfidReader
 from display import Display
 
 
-def game_loop(connection: ClientConnection, display: Display):
+def game_loop(channel: ClientChannel, display: Display):
     board = Board()
     while True:
-        message = connection.receive_message()
+        message = channel.receive_any()
         if message.tag == "board":
             # TODO: handle deserialization errors
             board = Board.deserialize(message.content)
@@ -23,7 +23,7 @@ def game_loop(connection: ClientConnection, display: Display):
             selected_col = next(cols)
             display.draw(board.to_image(selected_row=selected_row, selected_col=selected_col))
             # TODO: select col with encoder until button press
-            connection.send_to_server("place", f"{selected_row},{selected_col}")
+            channel.send_to_server("place", f"{selected_row},{selected_col}")
 
 
 def main():
@@ -35,8 +35,8 @@ def main():
         print("[INFO] Waiting for RFID card...")
         client_id = rfid_reader.read_uid()
 
-        with ClientConnection(broker_address, client_id) as connection:
-            game_loop(connection, display)
+        with ClientChannel(broker_address, client_id) as channel:
+            game_loop(channel, display)
 
 
 if __name__ == "__main__":

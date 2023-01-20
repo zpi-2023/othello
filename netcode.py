@@ -1,8 +1,8 @@
+from dataclasses import dataclass
 from typing import Any, Optional
 from abc import ABC
 from collections import deque
 import paho.mqtt.client as mqtt
-from message import Message
 
 SCOPE_NAME = "othello"
 SERVER_UID = "server"
@@ -10,12 +10,23 @@ BROADCAST = "*"
 LOCALHOST = "localhost"
 
 
-class Connection(ABC):
+@dataclass
+class Message:
+    sender: str
+    receiver: str
+    tag: str
+    content: str
+
+    def __str__(self) -> str:
+        return f"({self.sender})->({self.receiver}) [{self.tag}]: \"{self.content}\""
+
+
+class AbstractChannel(ABC):
     def __init__(self, broker_address: str, uid: str) -> None:
         self._broker_address = broker_address
         self._client = mqtt.Client(uid)
         self._uid = uid
-        self._message_queue: deque[Message] = deque()
+        self._mailbox: deque[Message] = deque()
 
     def __enter__(self):
         self._client.on_message = self._on_message
@@ -61,20 +72,20 @@ class Connection(ABC):
 
         print(f"[DEBUG] {message}")
 
-        self._message_queue.append(message)
+        self._mailbox.append(message)
 
     def _send_message(self, receiver: str, tag: str, content: Optional[str] = None) -> None:
         print(f"[DEBUG] {Message(self._uid, receiver, tag, content or '')}")
         self._client.publish("/".join([SCOPE_NAME, self._uid, receiver, tag]), content)
 
-    def receive_message(self) -> Message:
-        while not any(self._message_queue):
+    def receive_any(self) -> Message:
+        while not any(self._mailbox):
             pass
 
-        return self._message_queue.popleft()
+        return self._mailbox.popleft()
 
 
-class ClientConnection(Connection):
+class ClientChannel(AbstractChannel):
     def _on_connect(self) -> None:
         self.send_to_server("connected")
 
@@ -88,7 +99,7 @@ class ClientConnection(Connection):
         self._send_message(SERVER_UID, tag, content)
 
 
-class ServerConnection(Connection):
+class ServerChannel(AbstractChannel):
     def __init__(self) -> None:
         super().__init__(LOCALHOST, SERVER_UID)
 
