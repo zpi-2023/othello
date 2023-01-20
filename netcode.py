@@ -26,11 +26,17 @@ class Message:
 
 
 class AbstractChannel(ABC):
+    """
+    Abstract Base Class representing a wrapper around the MQTT protocol.
+    Modeled after Elixir's concurrency model, it allows you to write all
+    of the networking logic synchronously.
+    """
+
     def __init__(self, broker_address: str, uid: str) -> None:
         self._broker_address = broker_address
         self._client = mqtt.Client(uid)
         self._uid = uid
-        self._mailbox: deque[Message] = deque()
+        self._mailbox: deque[Message] = deque()  # stores unprocessed incoming messages
 
     def __enter__(self):
         self._client.on_message = self._on_message
@@ -84,6 +90,12 @@ class AbstractChannel(ABC):
         self._client.publish(message.topic, message.content)
 
     def receive_matching(self, condition: Callable[[Message], bool]) -> Message:
+        """
+        Take the first message matching `condition` from the mailbox. If no messages satisfy
+        the condition or the mailbox is empty, this method blocks the current thread until
+        a matching message arrives.
+        """
+
         while True:
             for message in self._mailbox:
                 if condition(message):
@@ -91,10 +103,23 @@ class AbstractChannel(ABC):
                     return message
 
     def receive_any(self) -> Message:
+        """
+        Take the first message from the mailbox. If the mailbox is empty, block the current thread
+        until a message arrives. You should avoid using this method and use `receive_matching`
+        instead when possible. Ideally, this method should be called only once per game turn to
+        drop any irrelevant packets.
+        """
+
         return self.receive_matching(lambda _message: True)
 
 
 class ClientChannel(AbstractChannel):
+    """
+    Represents the game client. Many such connections can be active at the same time
+    as long as their uids are different. This class can also be used on the same
+    device as ServerChannel if `LOCALHOST` is passed as `broker_id`.
+    """
+
     def _on_connect(self) -> None:
         self.send_to_server("connected")
 
@@ -105,15 +130,32 @@ class ClientChannel(AbstractChannel):
         return message.sender != SERVER_UID
 
     def send_to_server(self, tag: str, content: Optional[str] = None) -> None:
+        """
+        Send a message to the MQTT client with uid SERVER_UID.
+        """
+
         self._send_message(SERVER_UID, tag, content)
 
 
 class ServerChannel(AbstractChannel):
+    """
+    Represents the game server. Only one such connection should be active at any time.
+    It is assumed the MQTT broker is running on the device using this class.
+    """
+
     def __init__(self) -> None:
         super().__init__(LOCALHOST, SERVER_UID)
 
     def send_to_client(self, client_uid: str, tag: str, content: Optional[str] = None) -> None:
+        """
+        Send a message to the MQTT client with uid `client_uid`.
+        """
+
         self._send_message(client_uid, tag, content)
 
     def broadcast(self, tag: str, content: Optional[str] = None) -> None:
+        """
+        Send a message to all other connected MQTT clients.
+        """
+
         self._send_message(BROADCAST, tag, content)
