@@ -1,4 +1,5 @@
 from __future__ import annotations
+import re
 from enum import Enum
 from typing import Optional
 from PIL import Image
@@ -10,6 +11,7 @@ BLACK_IMAGE = Image.open("./img/black.png")
 WHITE_IMAGE = Image.open("./img/white.png")
 SELECTED_ROW_IMAGE = Image.open("./img/selected-row.png")
 SELECTED_TILE_IMAGE = Image.open("./img/selected-tile.png")
+BUFFER_PATTERN = re.compile(f"^([BW.]{{{BOARD_SIZE}}}($|\\|)){{{BOARD_SIZE}}}")
 
 
 class Tile(Enum):
@@ -68,10 +70,12 @@ class Board:
         return "|".join("".join(c.value for c in r) for r in self._board)
 
     @staticmethod
-    def deserialize(string: str) -> Board:
-        # TODO: handle deserialization errors
+    def deserialize(buffer: str) -> Optional[Board]:
+        if not BUFFER_PATTERN.match(buffer):
+            return None
+
         board = Board()
-        for r, tiles in enumerate(string.split("|")):
+        for r, tiles in enumerate(buffer.split("|")):
             for c, tile in enumerate(tiles):
                 board._board[r][c] = Tile(tile)
         return board

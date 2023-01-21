@@ -10,10 +10,11 @@ def game_loop(channel: ClientChannel, display: Display):
     while True:
         message = channel.receive_any()
         if message.tag == "board":
-            # TODO: handle deserialization errors
-            board = Board.deserialize(message.content)
-            display.draw(board.to_image())
-            channel.send_to_server("board-ack")
+            new_board = Board.deserialize(message.content)
+            if new_board is not None:
+                board = new_board
+                display.draw(board.to_image())
+                channel.send_to_server("board-ack")
         elif message.tag == "your-turn":
             color = Tile(message.content)
             rows = board.rows_with_valid_moves(color)
