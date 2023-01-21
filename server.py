@@ -1,5 +1,5 @@
 from netcode import ServerChannel
-from board import Board, Tile
+from board import Board, Tile, deserialize_place
 
 
 def wait_for_players(channel: ServerChannel) -> dict[Tile, str]:
@@ -31,10 +31,13 @@ def game_loop(channel: ServerChannel, players: dict[Tile, str]):
         channel.broadcast("board", board.serialize())
         channel.receive_matching(lambda m: m.sender == players[turn] and m.tag == "board-ack")
 
-        channel.send_to_client(players[turn], "your-turn", turn.value)
-        message = channel.receive_matching(lambda m: m.sender == players[turn] and m.tag == "place")
+        move = None
+        while move is None:
+            channel.send_to_client(players[turn], "your-turn", turn.value)
+            message = channel.receive_matching(lambda m: m.sender == players[turn] and m.tag == "place")
+            move = deserialize_place(message.content)
 
-        # TODO: place move
+        board.place(move)
 
         turn = turn.opposite()
 

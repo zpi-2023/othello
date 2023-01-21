@@ -14,6 +14,16 @@ SELECTED_TILE_IMAGE = Image.open("./img/selected-tile.png")
 BUFFER_PATTERN = re.compile(f"^([BW.]{{{BOARD_SIZE}}}($|\\|)){{{BOARD_SIZE}}}")
 
 
+def deserialize_place(place_string: str) -> Optional[tuple[int, int]]:
+    try:
+        rs, _, cs = place_string.partition(",")
+        r = int(rs)
+        c = int(cs)
+        return (r, c)
+    except:
+        return None
+
+
 class Tile(Enum):
     EMPTY = "."
     BLACK = "B"
@@ -78,15 +88,18 @@ class Board:
         for r, tiles in enumerate(buffer.split("|")):
             for c, tile in enumerate(tiles):
                 board._board[r][c] = Tile(tile)
+
         return board
 
     def rows_with_valid_moves(self, color: Tile) -> list[int]:
-        # TODO: return only row indices, where there is at least one valid move for color
-        return list(range(BOARD_SIZE))
+        return list(row for row in range(BOARD_SIZE) if self.tiles_with_valid_move(color, row))
 
     def tiles_with_valid_move(self, color: Tile, row: int) -> list[int]:
-        # TODO: return only tile indices for valid moves
-        return list(range(BOARD_SIZE))
+        return list(col for col in range(BOARD_SIZE) if self._is_move_valid(color, row, col))
+
+    def _is_move_valid(self, color: Tile, row: int, col: int) -> bool:
+        # TODO: validate if the move is legal
+        return True
 
     def place(self, row: int, col: int, color: Tile) -> None:
         # TODO: validate move
@@ -94,8 +107,17 @@ class Board:
         # TODO: flip other tiles
 
     def scores(self) -> dict[Tile, int]:
-        # TODO: count placed tiles for each color
-        return {Tile.BLACK: 0, Tile.WHITE: 0}
+        blacks = 0
+        whites = 0
+
+        for row in self._board:
+            for tile in row:
+                if tile == Tile.BLACK:
+                    blacks += 1
+                elif tile == Tile.WHITE:
+                    whites += 1
+
+        return {Tile.BLACK: blacks, Tile.WHITE: whites}
 
     def winner(self) -> Tile:
         # TODO: check win conditions
