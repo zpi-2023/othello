@@ -46,6 +46,8 @@ class Tile(Enum):
         else:
             raise ValueError()
 
+    def is_occupied(self) -> bool:
+        return not(self == Tile.EMPTY)
 
 class Board:
     def __init__(self) -> None:
@@ -98,8 +100,128 @@ class Board:
         return list(col for col in range(BOARD_SIZE) if self._is_move_valid(color, row, col))
 
     def _is_move_valid(self, color: Tile, row: int, col: int) -> bool:
-        # TODO: validate if the move is legal
-        return True
+        
+        do_i_return_true = False
+        
+        #right
+        for i in range(BOARD_SIZE - col - 1):
+            tile_to_check = self._board[row, col + (i + 1)]
+            if tile_to_check.is_occupied():
+                if tile_to_check == color.opposite:
+                    do_i_return_true = True
+                elif do_i_return_true:
+                    return True
+                else:
+                    break
+            else:
+                break
+
+        do_i_return_true = False
+        
+        #left
+        for i in range(col - 1):
+            tile_to_check = self._board[row, col - (i + 1)]
+            if tile_to_check.is_occupied():
+                if tile_to_check == color.opposite:
+                    do_i_return_true = True
+                elif do_i_return_true:
+                    return True
+                else:
+                    break
+            else:
+                break
+        
+        do_i_return_true = False
+
+        #up
+        for i in range(row - 1):
+            tile_to_check = self._board[row - (i + 1), col]
+            if tile_to_check.is_occupied():
+                if tile_to_check == color.opposite:
+                    do_i_return_true = True
+                elif do_i_return_true:
+                    return True
+                else:
+                    break
+            else:
+                break
+        
+        do_i_return_true = False
+        
+        #down
+        for i in range(BOARD_SIZE - row - 1):
+            tile_to_check = self._board[row + (i + 1), col]
+            if tile_to_check.is_occupied():
+                if tile_to_check == color.opposite:
+                    do_i_return_true = True
+                elif do_i_return_true:
+                    return True
+                else:
+                    break
+            else:
+                break
+
+        do_i_return_true = False
+        
+        #up-right
+        for i in range(min(BOARD_SIZE - col - 1, row - 1)):
+            tile_to_check = self._board[row - (i + 1), col + (i + 1)]
+            if tile_to_check.is_occupied():
+                if tile_to_check == color.opposite:
+                    do_i_return_true = True
+                elif do_i_return_true:
+                    return True
+                else:
+                    break
+            else:
+                break
+
+        do_i_return_true = False
+        
+        #up-left
+        for i in range(min(col - 1, row - 1)):
+            tile_to_check = self._board[row - (i + 1), col - (i + 1)]
+            if tile_to_check.is_occupied():
+                if tile_to_check == color.opposite:
+                    do_i_return_true = True
+                elif do_i_return_true:
+                    return True
+                else:
+                    break
+            else:
+                break
+        
+        do_i_return_true = False
+        
+        #down-left
+        for i in range(min(col - 1, BOARD_SIZE - row - 1)):
+            tile_to_check = self._board[row + (i + 1), col - (i + 1)]
+            if tile_to_check.is_occupied():
+                if tile_to_check == color.opposite:
+                    do_i_return_true = True
+                elif do_i_return_true:
+                    return True
+                else:
+                    break
+            else:
+                break
+        
+        do_i_return_true = False
+        
+        #down-right
+        for i in range(min(BOARD_SIZE - col - 1, BOARD_SIZE - row - 1)):
+            tile_to_check = self._board[row + (i + 1), col + (i + 1)]
+            if tile_to_check.is_occupied():
+                if tile_to_check == color.opposite:
+                    do_i_return_true = True
+                elif do_i_return_true:
+                    return True
+                else:
+                    break
+            else:
+                break
+
+        return False
 
     def place(self, row: int, col: int, color: Tile) -> None:
         # TODO: validate move
