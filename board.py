@@ -223,10 +223,102 @@ class Board:
 
         return False
 
+    def _flip_tiles(self, color: Tile, row: int, col: int):
+        
+        #right
+        for i in range(BOARD_SIZE - col - 1):
+            tile_to_check = self._board[row, col + (i + 1)]
+            if tile_to_check.is_occupied():
+                if tile_to_check == color.opposite:
+                    self._board[row, col + (i + 1)] = color
+                else:
+                    break
+            else:
+                break
+        
+        #left
+        for i in range(col - 1):
+            tile_to_check = self._board[row, col - (i + 1)]
+            if tile_to_check.is_occupied():
+                if tile_to_check == color.opposite:
+                    self._board[row, col - (i + 1)] = color
+                else:
+                    break
+            else:
+                break
+
+        #up
+        for i in range(row - 1):
+            tile_to_check = self._board[row - (i + 1), col]
+            if tile_to_check.is_occupied():
+                if tile_to_check == color.opposite:
+                    self._board[row - (i + 1), col] = color
+                else:
+                    break
+            else:
+                break
+        
+        #down
+        for i in range(BOARD_SIZE - row - 1):
+            tile_to_check = self._board[row + (i + 1), col]
+            if tile_to_check.is_occupied():
+                if tile_to_check == color.opposite:
+                    self._board[row + (i + 1), col] = color
+                else:
+                    break
+            else:
+                break
+        
+        #up-right
+        for i in range(min(BOARD_SIZE - col - 1, row - 1)):
+            tile_to_check = self._board[row - (i + 1), col + (i + 1)]
+            if tile_to_check.is_occupied():
+                if tile_to_check == color.opposite:
+                    self._board[row - (i + 1), col + (i + 1)] = color
+                else:
+                    break
+            else:
+                break
+        
+        #up-left
+        for i in range(min(col - 1, row - 1)):
+            tile_to_check = self._board[row - (i + 1), col - (i + 1)]
+            if tile_to_check.is_occupied():
+                if tile_to_check == color.opposite:
+                    self._board[row - (i + 1), col - (i + 1)] = color
+                else:
+                    break
+            else:
+                break
+        
+        #down-left
+        for i in range(min(col - 1, BOARD_SIZE - row - 1)):
+            tile_to_check = self._board[row + (i + 1), col - (i + 1)]
+            if tile_to_check.is_occupied():
+                if tile_to_check == color.opposite:
+                    self._board[row + (i + 1), col - (i + 1)] = color
+                else:
+                    break
+            else:
+                break
+        
+        #down-right
+        for i in range(min(BOARD_SIZE - col - 1, BOARD_SIZE - row - 1)):
+            tile_to_check = self._board[row + (i + 1), col + (i + 1)]
+            if tile_to_check.is_occupied():
+                if tile_to_check == color.opposite:
+                    self._board[row + (i + 1), col + (i + 1)] = color
+                else:
+                    break
+            else:
+                break
+
+        return False
+
     def place(self, row: int, col: int, color: Tile) -> None:
-        # TODO: validate move
-        self._board[row][col] = color
-        # TODO: flip other tiles
+        if self._is_move_valid(color, row, col):
+            self._board[row][col] = color
+            self._flip_tiles(color, row, col)
 
     def scores(self) -> dict[Tile, int]:
         blacks = 0
