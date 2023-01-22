@@ -120,5 +120,18 @@ class Board:
         return {Tile.BLACK: blacks, Tile.WHITE: whites}
 
     def winner(self) -> Tile:
-        # TODO: check win conditions
+        # players wins when at least one condition is met:
+        score = self.scores()
+
+        # 1) the board has no empty tile
+        # 2) none of the players cannot make a valid move
+        if  score[Tile.WHITE] + score[Tile.BLACK] == BOARD_SIZE * BOARD_SIZE or
+            not self.rows_with_valid_moves(Tile.BLACK) or
+            not self.rows_with_valid_moves(Tile.WHITE):
+            return max(score, key=score.get)
+
+        # 3) there is only one tile color on the board
+        if score[Tile.WHITE] == 0 or score[Tile.BLACK] == 0:
+            return min(score, key=score.get)
+
         return Tile.EMPTY
