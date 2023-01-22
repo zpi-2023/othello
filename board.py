@@ -47,7 +47,7 @@ class Tile(Enum):
             raise ValueError()
 
     def is_occupied(self) -> bool:
-        return not(self == Tile.EMPTY)
+        return self != Tile.EMPTY
 
 class Board:
     def __init__(self) -> None:
