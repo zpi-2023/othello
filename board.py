@@ -49,6 +49,7 @@ class Tile(Enum):
     def is_occupied(self) -> bool:
         return self != Tile.EMPTY
 
+
 class Board:
     def __init__(self) -> None:
         self._board = [[Tile.EMPTY for _c in range(BOARD_SIZE)] for _r in range(BOARD_SIZE)]
@@ -57,7 +58,7 @@ class Board:
         self._board[4][3] = Tile.BLACK
         self._board[4][4] = Tile.WHITE
 
-    def to_image(self, /, *, selected_row: Optional[int] = None, selected_col: Optional[int] = None) -> Image.Image:
+    def to_image(self, selected_row: Optional[int] = None, selected_col: Optional[int] = None) -> Image.Image:
         image = Image.new("RGBA", BOARD_IMAGE.size)
         image.paste(BOARD_IMAGE)
 
@@ -100,10 +101,10 @@ class Board:
         return list(col for col in range(BOARD_SIZE) if self._is_move_valid(color, row, col))
 
     def _is_move_valid(self, color: Tile, row: int, col: int) -> bool:
-        
+
         do_i_return_true = False
-        
-        #right
+
+        # right
         for i in range(BOARD_SIZE - col - 1):
             tile_to_check = self._board[row, col + (i + 1)]
             if tile_to_check.is_occupied():
@@ -117,8 +118,8 @@ class Board:
                 break
 
         do_i_return_true = False
-        
-        #left
+
+        # left
         for i in range(col - 1):
             tile_to_check = self._board[row, col - (i + 1)]
             if tile_to_check.is_occupied():
@@ -130,10 +131,10 @@ class Board:
                     break
             else:
                 break
-        
+
         do_i_return_true = False
 
-        #up
+        # up
         for i in range(row - 1):
             tile_to_check = self._board[row - (i + 1), col]
             if tile_to_check.is_occupied():
@@ -145,10 +146,10 @@ class Board:
                     break
             else:
                 break
-        
+
         do_i_return_true = False
-        
-        #down
+
+        # down
         for i in range(BOARD_SIZE - row - 1):
             tile_to_check = self._board[row + (i + 1), col]
             if tile_to_check.is_occupied():
@@ -162,8 +163,8 @@ class Board:
                 break
 
         do_i_return_true = False
-        
-        #up-right
+
+        # up-right
         for i in range(min(BOARD_SIZE - col - 1, row - 1)):
             tile_to_check = self._board[row - (i + 1), col + (i + 1)]
             if tile_to_check.is_occupied():
@@ -177,8 +178,8 @@ class Board:
                 break
 
         do_i_return_true = False
-        
-        #up-left
+
+        # up-left
         for i in range(min(col - 1, row - 1)):
             tile_to_check = self._board[row - (i + 1), col - (i + 1)]
             if tile_to_check.is_occupied():
@@ -190,10 +191,10 @@ class Board:
                     break
             else:
                 break
-        
+
         do_i_return_true = False
-        
-        #down-left
+
+        # down-left
         for i in range(min(col - 1, BOARD_SIZE - row - 1)):
             tile_to_check = self._board[row + (i + 1), col - (i + 1)]
             if tile_to_check.is_occupied():
@@ -205,10 +206,10 @@ class Board:
                     break
             else:
                 break
-        
+
         do_i_return_true = False
-        
-        #down-right
+
+        # down-right
         for i in range(min(BOARD_SIZE - col - 1, BOARD_SIZE - row - 1)):
             tile_to_check = self._board[row + (i + 1), col + (i + 1)]
             if tile_to_check.is_occupied():
@@ -224,8 +225,8 @@ class Board:
         return False
 
     def _flip_tiles(self, color: Tile, row: int, col: int):
-        
-        #right
+
+        # right
         for i in range(BOARD_SIZE - col - 1):
             tile_to_check = self._board[row, col + (i + 1)]
             if tile_to_check.is_occupied():
@@ -235,8 +236,8 @@ class Board:
                     break
             else:
                 break
-        
-        #left
+
+        # left
         for i in range(col - 1):
             tile_to_check = self._board[row, col - (i + 1)]
             if tile_to_check.is_occupied():
@@ -247,7 +248,7 @@ class Board:
             else:
                 break
 
-        #up
+        # up
         for i in range(row - 1):
             tile_to_check = self._board[row - (i + 1), col]
             if tile_to_check.is_occupied():
@@ -257,8 +258,8 @@ class Board:
                     break
             else:
                 break
-        
-        #down
+
+        # down
         for i in range(BOARD_SIZE - row - 1):
             tile_to_check = self._board[row + (i + 1), col]
             if tile_to_check.is_occupied():
@@ -268,8 +269,8 @@ class Board:
                     break
             else:
                 break
-        
-        #up-right
+
+        # up-right
         for i in range(min(BOARD_SIZE - col - 1, row - 1)):
             tile_to_check = self._board[row - (i + 1), col + (i + 1)]
             if tile_to_check.is_occupied():
@@ -279,8 +280,8 @@ class Board:
                     break
             else:
                 break
-        
-        #up-left
+
+        # up-left
         for i in range(min(col - 1, row - 1)):
             tile_to_check = self._board[row - (i + 1), col - (i + 1)]
             if tile_to_check.is_occupied():
@@ -290,8 +291,8 @@ class Board:
                     break
             else:
                 break
-        
-        #down-left
+
+        # down-left
         for i in range(min(col - 1, BOARD_SIZE - row - 1)):
             tile_to_check = self._board[row + (i + 1), col - (i + 1)]
             if tile_to_check.is_occupied():
@@ -301,8 +302,8 @@ class Board:
                     break
             else:
                 break
-        
-        #down-right
+
+        # down-right
         for i in range(min(BOARD_SIZE - col - 1, BOARD_SIZE - row - 1)):
             tile_to_check = self._board[row + (i + 1), col + (i + 1)]
             if tile_to_check.is_occupied():
@@ -339,9 +340,7 @@ class Board:
 
         # 1) the board has no empty tile
         # 2) none of the players cannot make a valid move
-        if  score[Tile.WHITE] + score[Tile.BLACK] == BOARD_SIZE * BOARD_SIZE or
-            not self.rows_with_valid_moves(Tile.BLACK) or
-            not self.rows_with_valid_moves(Tile.WHITE):
+        if score[Tile.WHITE] + score[Tile.BLACK] == BOARD_SIZE * BOARD_SIZE or not self.rows_with_valid_moves(Tile.BLACK) or not self.rows_with_valid_moves(Tile.WHITE):
             return max(score, key=score.get)
 
         # 3) there is only one tile color on the board
