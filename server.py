@@ -24,11 +24,11 @@ def game_loop(channel: ServerChannel, players: dict[Tile, str]):
     turn = Tile.BLACK
 
     while board.winner() == Tile.EMPTY:
-        # TODO: Flush messages instead
-        message = channel.receive_any()
-        if message.tag == "disconnected" and message.sender in players.values:
-            print(f"[INFO] Player ({message.sender}) left the game!")
-            # TODO: game over, second player wins
+        messages = channel.flush_mailbox()
+        for message in messages:
+            if message.tag == "disconnected" and message.sender in players.values:
+                print(f"[INFO] Player ({message.sender}) left the game!")
+                # TODO: game over, second player wins
 
         print(f"[INFO] Starting {turn}'s turn!")
         print("[INFO] Sending board state...")
