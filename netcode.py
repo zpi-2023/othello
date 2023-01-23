@@ -3,6 +3,7 @@ from typing import Any, Optional, Callable
 from abc import ABC
 from collections import deque
 import paho.mqtt.client as mqtt
+from threading import Lock
 
 SCOPE_NAME = "othello"
 SERVER_UID = "server"
@@ -37,6 +38,7 @@ class AbstractChannel(ABC):
         self._client = mqtt.Client(uid)
         self._uid = uid
         self._mailbox: deque[Message] = deque()  # stores unprocessed incoming messages
+        self._lock = Lock()
 
     def __enter__(self):
         self._client.on_message = self._on_message
@@ -82,7 +84,9 @@ class AbstractChannel(ABC):
 
         print(f"[DEBUG] {message}")
 
+        self._lock.acquire()
         self._mailbox.append(message)
+        self._lock.release()
 
     def _send_message(self, receiver: str, tag: str, content: Optional[str] = None) -> None:
         message = Message(self._uid, receiver, tag, content or '')
@@ -97,10 +101,12 @@ class AbstractChannel(ABC):
         """
 
         while True:
+            self._lock.acquire()
             for message in self._mailbox:
                 if condition(message):
                     self._mailbox.remove(message)
                     return message
+            self._lock.release()
 
     def receive_any(self) -> Message:
         """
@@ -117,9 +123,10 @@ class AbstractChannel(ABC):
         Remove all messages from the mailbox and return them.
         """
 
-        # TODO: This possibly isn't thread safe?
+        self._lock.acquire()
         result = list(self._mailbox.copy())
         self._mailbox.clear()
+        self._lock.release()
         return result
 
 
