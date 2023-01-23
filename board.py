@@ -104,6 +104,9 @@ class Board:
 
         do_i_return_true = False
 
+        if(self._board[row][col].is_occupied()):
+            return False
+
         # right
         for i in range(BOARD_SIZE - col - 1):
             tile_to_check = self._board[row][col + (i + 1)]

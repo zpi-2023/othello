@@ -32,6 +32,10 @@ def place_test_black():
     #expected_result = {Tile.BLACK : 4, Tile.WHITE : 1}
 
     board.place(3,2,Tile.BLACK)
+    print(board.serialize())
+    board.place(4,2,Tile.WHITE)
+    print(board.serialize())
+    board.place(5,4,Tile.BLACK)
     
     print(board.serialize())
     
