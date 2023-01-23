@@ -352,7 +352,9 @@ class Board:
 
         # 1) the board has no empty tile
         # 2) none of the players cannot make a valid move
-        if score[Tile.WHITE] + score[Tile.BLACK] == BOARD_SIZE * BOARD_SIZE or not self.rows_with_valid_moves(Tile.BLACK) or not self.rows_with_valid_moves(Tile.WHITE):
+        if score[Tile.WHITE] + score[Tile.BLACK] == BOARD_SIZE * BOARD_SIZE or not (
+            self.rows_with_valid_moves(Tile.BLACK) or self.rows_with_valid_moves(Tile.WHITE)
+        ):
             return max(score, key=score.get)
 
         # 3) there is only one tile color on the board
