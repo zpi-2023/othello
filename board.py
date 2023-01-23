@@ -104,11 +104,14 @@ class Board:
 
         do_i_return_true = False
 
+        if(self._board[row][col].is_occupied()):
+            return False
+
         # right
         for i in range(BOARD_SIZE - col - 1):
             tile_to_check = self._board[row][col + (i + 1)]
             if tile_to_check.is_occupied():
-                if tile_to_check == color.opposite:
+                if tile_to_check == color.opposite():
                     do_i_return_true = True
                 elif do_i_return_true:
                     return True
@@ -123,7 +126,7 @@ class Board:
         for i in range(col - 1):
             tile_to_check = self._board[row][col - (i + 1)]
             if tile_to_check.is_occupied():
-                if tile_to_check == color.opposite:
+                if tile_to_check == color.opposite():
                     do_i_return_true = True
                 elif do_i_return_true:
                     return True
@@ -138,7 +141,7 @@ class Board:
         for i in range(row - 1):
             tile_to_check = self._board[row - (i + 1)][col]
             if tile_to_check.is_occupied():
-                if tile_to_check == color.opposite:
+                if tile_to_check == color.opposite():
                     do_i_return_true = True
                 elif do_i_return_true:
                     return True
@@ -153,7 +156,7 @@ class Board:
         for i in range(BOARD_SIZE - row - 1):
             tile_to_check = self._board[row + (i + 1)][col]
             if tile_to_check.is_occupied():
-                if tile_to_check == color.opposite:
+                if tile_to_check == color.opposite():
                     do_i_return_true = True
                 elif do_i_return_true:
                     return True
@@ -168,7 +171,7 @@ class Board:
         for i in range(min(BOARD_SIZE - col - 1, row - 1)):
             tile_to_check = self._board[row - (i + 1)][col + (i + 1)]
             if tile_to_check.is_occupied():
-                if tile_to_check == color.opposite:
+                if tile_to_check == color.opposite():
                     do_i_return_true = True
                 elif do_i_return_true:
                     return True
@@ -183,7 +186,7 @@ class Board:
         for i in range(min(col - 1, row - 1)):
             tile_to_check = self._board[row - (i + 1)][col - (i + 1)]
             if tile_to_check.is_occupied():
-                if tile_to_check == color.opposite:
+                if tile_to_check == color.opposite():
                     do_i_return_true = True
                 elif do_i_return_true:
                     return True
@@ -198,7 +201,7 @@ class Board:
         for i in range(min(col - 1, BOARD_SIZE - row - 1)):
             tile_to_check = self._board[row + (i + 1)][col - (i + 1)]
             if tile_to_check.is_occupied():
-                if tile_to_check == color.opposite:
+                if tile_to_check == color.opposite():
                     do_i_return_true = True
                 elif do_i_return_true:
                     return True
@@ -213,7 +216,7 @@ class Board:
         for i in range(min(BOARD_SIZE - col - 1, BOARD_SIZE - row - 1)):
             tile_to_check = self._board[row + (i + 1)][col + (i + 1)]
             if tile_to_check.is_occupied():
-                if tile_to_check == color.opposite:
+                if tile_to_check == color.opposite():
                     do_i_return_true = True
                 elif do_i_return_true:
                     return True
@@ -321,8 +324,6 @@ class Board:
                     break
             else:
                 break
-
-        return False
 
     def place(self, row: int, col: int, color: Tile) -> None:
         if self._is_move_valid(color, row, col):
