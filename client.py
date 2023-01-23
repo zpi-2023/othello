@@ -1,11 +1,14 @@
 import sys
 from typing import Any, Callable, Optional
+from PIL import Image
 from config import *
 from netcode import ClientChannel, LOCALHOST
 from board import Board, Tile
 from rfid_reader import RfidReader
 from input_reader import Button, Encoder
 from display import Display
+
+RFID_IMAGE = Image.open("./img/board.png")
 
 button_red = Button(button_red_pin)
 button_green = Button(button_green_pin)
@@ -55,7 +58,6 @@ def game_loop(channel: ClientChannel, display: Display):
                 print("[WARNING] Invalid board received!")
         elif message.tag == "your-turn":
             print("[INFO] Your turn!")
-            # TODO: memorize client color in a better way than sending it every turn
             color = Tile(message.content)
 
             selected_row = None
@@ -86,7 +88,7 @@ def main():
 
     with Display() as display:
         rfid_reader = RfidReader()
-        # TODO: print message that we are waiting for rfid
+        display.draw(RFID_IMAGE)
         print("[INFO] Waiting for RFID card...")
         client_id = rfid_reader.read_uid()
 
