@@ -48,7 +48,8 @@ def game_loop(channel: ServerChannel, players: dict[Tile, str]):
             message = channel.receive_matching(lambda m: m.sender == players[turn] and m.tag == "place")
             move = deserialize_place(message.content)
 
-        board.place(move)
+        row, col = move
+        board.place(row, col, turn)
 
         turn = turn.opposite()
 
