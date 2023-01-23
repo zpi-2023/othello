@@ -322,8 +322,6 @@ class Board:
             else:
                 break
 
-        return False
-
     def place(self, row: int, col: int, color: Tile) -> None:
         if self._is_move_valid(color, row, col):
             self._board[row][col] = color
