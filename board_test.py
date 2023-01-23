@@ -1,9 +1,33 @@
 from board import Board
 from board import Tile
 
-def start_position_test():
-    x = Board()
-    print(x.rows_with_valid_moves(Tile.BLACK))
+def start_position_test_black():
+    board = Board() 
+    expected_result = {(2, 3), (3, 2), (4, 5), (5, 4)}
+    player = Tile.BLACK
+
+    for x in range(8):
+        for y in range(8):
+            valid = board._is_move_valid(player, x, y)
+            if (x, y) in expected_result:
+                assert valid, f'start_position_test_black(): expected valid position at row:{x} col:{y}'
+            else:
+                assert not valid, f'start_position_test_black(): expected not valid position at row:{x} col:{y}'
+
+def start_position_test_white():
+    board = Board() 
+    expected_result = {(2, 4), (3, 5), (4, 2), (5, 3)}
+    player = Tile.WHITE
+
+    for x in range(8):
+        for y in range(8):
+            valid = board._is_move_valid(player, x, y)
+            if (x, y) in expected_result:
+                assert valid, f'start_position_test_black(): expected valid position at row:{x} col:{y}'
+            else:
+                assert not valid, f'start_position_test_black(): expected not valid position at row:{x} col:{y}'
 
 if __name__ == '__main__':
-    start_position_test()
+    start_position_test_black()
+    start_position_test_white()
+    print("Board tested successful, all tests passed")
