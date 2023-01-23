@@ -52,7 +52,7 @@ def game_loop(channel: ClientChannel, display: Display):
             new_board = Board.deserialize(message.content)
             if new_board is not None:
                 board = new_board
-                display.draw(board.to_image())
+                display.draw(board.to_image(color=color))
                 channel.send_to_server("board-ack")
             else:
                 print("[WARNING] Invalid board received!")
@@ -67,14 +67,14 @@ def game_loop(channel: ClientChannel, display: Display):
                 valid_rows = board.rows_with_valid_moves(color)
                 selected_row = select_with_encoder(
                     valid_rows,
-                    lambda row: display.draw(board.to_image(row)),
+                    lambda row: display.draw(board.to_image(row, color=color)),
                     can_cancel=False
                 )
                 print("[INFO] Select column...")
                 valid_cols = board.tiles_with_valid_move(color, selected_row)
                 selected_col = select_with_encoder(
                     valid_cols,
-                    lambda col: display.draw(board.to_image(selected_row, col)),
+                    lambda col: display.draw(board.to_image(selected_row, col, color=color)),
                     can_cancel=True
                 )
 

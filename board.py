@@ -11,6 +11,7 @@ BLACK_IMAGE = Image.open("./img/black.png")
 WHITE_IMAGE = Image.open("./img/white.png")
 SELECTED_ROW_IMAGE = Image.open("./img/selected-row.png")
 SELECTED_TILE_IMAGE = Image.open("./img/selected-tile.png")
+POSSIBLE_TILE_IMAGE = Image.open("./img/possible-tile.png")
 BUFFER_PATTERN = re.compile(f"^([BW.]{{{BOARD_SIZE}}}($|\\|)){{{BOARD_SIZE}}}")
 
 
@@ -58,7 +59,7 @@ class Board:
         self._board[4][3] = Tile.BLACK
         self._board[4][4] = Tile.WHITE
 
-    def to_image(self, selected_row: Optional[int] = None, selected_col: Optional[int] = None) -> Image.Image:
+    def to_image(self, selected_row: Optional[int] = None, selected_col: Optional[int] = None, color: Tile = Tile.EMPTY) -> Image.Image:
         image = Image.new("RGBA", BOARD_IMAGE.size)
         image.paste(BOARD_IMAGE)
 
@@ -67,6 +68,8 @@ class Board:
                 tile_image = self._board[r][c].image
                 if tile_image is not None:
                     image.paste(tile_image, (c * TILE_SIZE, r * TILE_SIZE), tile_image)
+                if self._is_move_valid(color, r, c):
+                    image.paste(tile_image, (c * TILE_SIZE, r * TILE_SIZE), POSSIBLE_TILE_IMAGE)
 
         if selected_row is not None:
             if selected_col is not None:
@@ -104,7 +107,7 @@ class Board:
 
         do_i_return_true = False
 
-        if(self._board[row][col].is_occupied()):
+        if (self._board[row][col].is_occupied()):
             return False
 
         # right
@@ -296,7 +299,7 @@ class Board:
                 if tile_to_check == color:
                     while i >= 0:
                         self._board[row - (i + 1)][col - (i + 1)] = color
-                        i-= 1
+                        i -= 1
                     break
             else:
                 break
