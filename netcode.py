@@ -112,6 +112,16 @@ class AbstractChannel(ABC):
 
         return self.receive_matching(lambda _message: True)
 
+    def flush_mailbox(self) -> list[Message]:
+        """
+        Remove all messages from the mailbox and return them.
+        """
+
+        # TODO: This possibly isn't thread safe?
+        result = list(self._mailbox.copy())
+        self._mailbox.clear()
+        return result
+
 
 class ClientChannel(AbstractChannel):
     """
