@@ -123,7 +123,7 @@ class Board:
         do_i_return_true = False
 
         # left
-        for i in range(col - 1):
+        for i in range(col):
             tile_to_check = self._board[row][col - (i + 1)]
             if tile_to_check.is_occupied():
                 if tile_to_check == color.opposite():
@@ -138,7 +138,7 @@ class Board:
         do_i_return_true = False
 
         # up
-        for i in range(row - 1):
+        for i in range(row):
             tile_to_check = self._board[row - (i + 1)][col]
             if tile_to_check.is_occupied():
                 if tile_to_check == color.opposite():
@@ -168,7 +168,7 @@ class Board:
         do_i_return_true = False
 
         # up-right
-        for i in range(min(BOARD_SIZE - col - 1, row - 1)):
+        for i in range(min(BOARD_SIZE - col - 1, row)):
             tile_to_check = self._board[row - (i + 1)][col + (i + 1)]
             if tile_to_check.is_occupied():
                 if tile_to_check == color.opposite():
@@ -183,7 +183,7 @@ class Board:
         do_i_return_true = False
 
         # up-left
-        for i in range(min(col - 1, row - 1)):
+        for i in range(min(col, row)):
             tile_to_check = self._board[row - (i + 1)][col - (i + 1)]
             if tile_to_check.is_occupied():
                 if tile_to_check == color.opposite():
@@ -198,7 +198,7 @@ class Board:
         do_i_return_true = False
 
         # down-left
-        for i in range(min(col - 1, BOARD_SIZE - row - 1)):
+        for i in range(min(col, BOARD_SIZE - row - 1)):
             tile_to_check = self._board[row + (i + 1)][col - (i + 1)]
             if tile_to_check.is_occupied():
                 if tile_to_check == color.opposite():
@@ -242,7 +242,7 @@ class Board:
                 break
 
         # left
-        for i in range(col - 1):
+        for i in range(col):
             tile_to_check = self._board[row][col - (i + 1)]
             if tile_to_check.is_occupied():
                 if tile_to_check == color:
@@ -254,7 +254,7 @@ class Board:
                 break
 
         # up
-        for i in range(row - 1):
+        for i in range(row):
             tile_to_check = self._board[row - (i + 1)][col]
             if tile_to_check.is_occupied():
                 if tile_to_check == color:
@@ -278,7 +278,7 @@ class Board:
                 break
 
         # up-right
-        for i in range(min(BOARD_SIZE - col - 1, row - 1)):
+        for i in range(min(BOARD_SIZE - col - 1, row)):
             tile_to_check = self._board[row - (i + 1)][col + (i + 1)]
             if tile_to_check.is_occupied():
                 if tile_to_check == color:
@@ -290,7 +290,7 @@ class Board:
                 break
 
         # up-left
-        for i in range(min(col - 1, row - 1)):
+        for i in range(min(col, row)):
             tile_to_check = self._board[row - (i + 1)][col - (i + 1)]
             if tile_to_check.is_occupied():
                 if tile_to_check == color:
@@ -302,7 +302,7 @@ class Board:
                 break
 
         # down-left
-        for i in range(min(col - 1, BOARD_SIZE - row - 1)):
+        for i in range(min(col, BOARD_SIZE - row - 1)):
             tile_to_check = self._board[row + (i + 1)][col - (i + 1)]
             if tile_to_check.is_occupied():
                 if tile_to_check == color:
