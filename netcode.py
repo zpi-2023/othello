@@ -101,12 +101,14 @@ class AbstractChannel(ABC):
         """
 
         while True:
-            self._lock.acquire()
-            for message in self._mailbox:
-                if condition(message):
-                    self._mailbox.remove(message)
-                    return message
-            self._lock.release()
+            try:
+                self._lock.acquire()
+                for message in self._mailbox:
+                    if condition(message):
+                        self._mailbox.remove(message)
+                        return message
+            finally:
+                self._lock.release()
 
     def receive_any(self) -> Message:
         """
