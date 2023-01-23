@@ -6,18 +6,12 @@ def wait_for_players(channel: ServerChannel) -> dict[Tile, str]:
     print("[INFO] Waiting for players...")
     clients: set[str] = set()
 
-    print("0")
     while len(clients) < 2:
-        print("1")
         message = channel.receive_any()
-        print("2")
         if message.tag == "connected":
-            print("3")
             clients.add(message.sender)
         elif message.tag == "disconnected":
-            print("4")
             clients.discard(message.sender)
-    print("5")
 
     black_uid = clients.pop()
     white_uid = clients.pop()
