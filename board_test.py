@@ -27,7 +27,17 @@ def start_position_test_white():
             else:
                 assert not valid, f'start_position_test_black(): expected not valid position at row:{x} col:{y}'
 
+def place_test_black():
+    board = Board()
+    #expected_result = {Tile.BLACK : 4, Tile.WHITE : 1}
+
+    board.place(3,2,Tile.BLACK)
+    
+    print(board.serialize())
+    
+
 if __name__ == '__main__':
-    start_position_test_black()
-    start_position_test_white()
+    #start_position_test_black()
+    #start_position_test_white()
+    place_test_black()
     print("Board tested successful, all tests passed")
