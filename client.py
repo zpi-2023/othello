@@ -52,6 +52,7 @@ def game_loop(channel: ClientChannel, display: Display):
             new_board = Board.deserialize(message.content)
             if new_board is not None:
                 board = new_board
+                display.draw(board.to_image())
                 channel.send_to_server("board-ack")
             else:
                 print("[WARNING] Invalid board received!")
