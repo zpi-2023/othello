@@ -84,9 +84,8 @@ class AbstractChannel(ABC):
 
         print(f"[DEBUG] {message}")
 
-        self._lock.acquire()
-        self._mailbox.append(message)
-        self._lock.release()
+        with self._lock:
+            self._mailbox.append(message)
 
     def _send_message(self, receiver: str, tag: str, content: Optional[str] = None) -> None:
         message = Message(self._uid, receiver, tag, content or '')
@@ -101,14 +100,11 @@ class AbstractChannel(ABC):
         """
 
         while True:
-            try:
-                self._lock.acquire()
+            with self._lock:
                 for message in self._mailbox:
                     if condition(message):
                         self._mailbox.remove(message)
                         return message
-            finally:
-                self._lock.release()
 
     def receive_any(self) -> Message:
         """
@@ -125,11 +121,10 @@ class AbstractChannel(ABC):
         Remove all messages from the mailbox and return them.
         """
 
-        self._lock.acquire()
-        result = list(self._mailbox.copy())
-        self._mailbox.clear()
-        self._lock.release()
-        return result
+        with self._lock:
+            result = list(self._mailbox.copy())
+            self._mailbox.clear()
+            return result
 
 
 class ClientChannel(AbstractChannel):
