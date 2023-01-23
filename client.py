@@ -8,7 +8,7 @@ from rfid_reader import RfidReader
 from input_reader import Button, Encoder
 from display import Display
 
-RFID_IMAGE = Image.open("./img/board.png")
+RFID_IMAGE = Image.open("./img/rfid.png").convert("RGB")
 
 button_red = Button(button_red_pin)
 button_green = Button(button_green_pin)
