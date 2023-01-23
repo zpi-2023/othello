@@ -1,5 +1,5 @@
 import sys
-from typing import Any, Callable
+from typing import Any, Callable, Optional
 from config import *
 from netcode import ClientChannel, LOCALHOST
 from board import Board, Tile
@@ -8,16 +8,21 @@ from input_reader import Button, Encoder
 from display import Display
 
 button_red = Button(button_red_pin)
-# button_green = Button(button_green_pin)
+button_green = Button(button_green_pin)
 encoder = Encoder(encoder_first_pin, encoder_second_pin)
 
 
-def select_with_encoder(choices: list[Any], on_selection: Callable[[Any], None]) -> Any:
+def select_with_encoder(
+        choices: list[Any],
+        on_selection: Callable[[Any],
+                               None],
+        can_cancel: bool = False) -> Optional[Any]:
     selected_index = 0
     on_selection(choices[selected_index])
     print("[INFO] Waiting for user input...")
     while True:
         button_red.update()
+        button_green.update()
         encoder.update()
 
         if encoder.was_just_turned_left:
@@ -30,6 +35,9 @@ def select_with_encoder(choices: list[Any], on_selection: Callable[[Any], None])
 
         if button_red.was_just_pressed:
             return choices[selected_index]
+
+        if can_cancel and button_green.was_just_pressed:
+            return None
 
 
 def game_loop(channel: ClientChannel, display: Display):
@@ -50,12 +58,23 @@ def game_loop(channel: ClientChannel, display: Display):
             # TODO: memorize client color in a better way than sending it every turn
             color = Tile(message.content)
 
-            print("[INFO] Select row...")
-            valid_rows = board.rows_with_valid_moves(color)
-            selected_row = select_with_encoder(valid_rows, lambda row: display.draw(board.to_image(row)))
-            print("[INFO] Select column...")
-            valid_cols = board.tiles_with_valid_move(color, selected_row)
-            selected_col = select_with_encoder(valid_cols, lambda col: display.draw(board.to_image(selected_row, col)))
+            selected_row = None
+            selected_col = None
+            while selected_col is None:
+                print("[INFO] Select row...")
+                valid_rows = board.rows_with_valid_moves(color)
+                selected_row = select_with_encoder(
+                    valid_rows,
+                    lambda row: display.draw(board.to_image(row)),
+                    can_cancel=False
+                )
+                print("[INFO] Select column...")
+                valid_cols = board.tiles_with_valid_move(color, selected_row)
+                selected_col = select_with_encoder(
+                    valid_cols,
+                    lambda col: display.draw(board.to_image(selected_row, col)),
+                    can_cancel=True
+                )
 
             print("[INFO] Placing tile...")
             channel.send_to_server("place", f"{selected_row},{selected_col}")
