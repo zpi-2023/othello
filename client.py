@@ -52,13 +52,13 @@ def game_loop(channel: ClientChannel, display: Display):
             new_board = Board.deserialize(message.content)
             if new_board is not None:
                 board = new_board
-                display.draw(board.to_image(color=color))
                 channel.send_to_server("board-ack")
             else:
                 print("[WARNING] Invalid board received!")
         elif message.tag == "your-turn":
             print("[INFO] Your turn!")
             color = Tile(message.content)
+            display.draw(board.to_image(color=color))
 
             selected_row = None
             selected_col = None
