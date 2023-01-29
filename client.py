@@ -9,6 +9,7 @@ from input_reader import Button, Encoder
 from display import Display
 
 RFID_IMAGE = Image.open("./img/rfid.png").convert("RGB")
+WAITING_PLAYER_IMAGE = Image.open("./img/waiting-player.png").convert("RGB")
 
 button_red = Button(button_red_pin)
 button_green = Button(button_green_pin)
@@ -92,6 +93,8 @@ def main():
         display.draw(RFID_IMAGE)
         print("[INFO] Waiting for RFID card...")
         client_id = rfid_reader.read_uid()
+        # TODO: buzz
+        display.draw(WAITING_PLAYER_IMAGE)
 
         with ClientChannel(broker_address, client_id) as channel:
             game_loop(channel, display)
