@@ -21,8 +21,8 @@ GPIO.setup(button_green_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(encoder_first_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(encoder_second_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-buzzerPin = 23
-GPIO.setup(buzzerPin, GPIO.OUT)
-GPIO.output(buzzerPin, 1)
+buzzer_pin = 23
+GPIO.setup(buzzer_pin, GPIO.OUT)
+GPIO.output(buzzer_pin, 1)
 
 ws2812pin = 8

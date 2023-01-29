@@ -1,4 +1,5 @@
 import sys
+import time
 from typing import Any, Callable, Optional
 from PIL import Image
 from config import *
@@ -16,6 +17,10 @@ WIN_WHITE = Image.open("./img/win-white.png").convert("RGB")
 button_red = Button(button_red_pin)
 button_green = Button(button_green_pin)
 encoder = Encoder(encoder_first_pin, encoder_second_pin)
+
+
+def buzzer(state: bool) -> None:
+    GPIO.output(buzzer_pin, not state)
 
 
 def select_with_encoder(
@@ -105,8 +110,10 @@ def main():
         print("[INFO] Waiting for RFID card...")
         client_id = rfid_reader.read_uid()
         print("[INFO] RFID scanned, waiting for other player...")
-        # TODO: buzz
+        buzzer(True)
         display.draw(WAITING_PLAYER_IMAGE)
+        time.sleep(1)
+        buzzer(False)
 
         with ClientChannel(broker_address, client_id) as channel:
             game_loop(channel, display)
