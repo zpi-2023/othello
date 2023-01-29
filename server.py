@@ -46,7 +46,10 @@ def game_loop(channel: ServerChannel, players: dict[Tile, str]):
         board.place(row, col, turn)
 
         turn = turn.opposite()
-    print(f"[INFO] Game finished, winner: {board.winner()}")
+
+    winner = board.winner()
+    print(f"[INFO] Game finished, winner: {winner}")
+    channel.broadcast("winner", winner.value)
 
 
 def main():

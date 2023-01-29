@@ -10,6 +10,8 @@ from display import Display
 
 RFID_IMAGE = Image.open("./img/rfid.png").convert("RGB")
 WAITING_PLAYER_IMAGE = Image.open("./img/waiting-player.png").convert("RGB")
+WIN_BLACK = Image.open("./img/win-black.png").convert("RGB")
+WIN_WHITE = Image.open("./img/win-white.png").convert("RGB")
 
 button_red = Button(button_red_pin)
 button_green = Button(button_green_pin)
@@ -82,6 +84,15 @@ def game_loop(channel: ClientChannel, display: Display):
 
             print("[INFO] Placing tile...")
             channel.send_to_server("place", f"{selected_row},{selected_col}")
+        elif message.tag == "winner":
+            winner = Tile(message.content)
+            print(f"[INFO] Game finished, winner: {winner}")
+            if winner == Tile.BLACK:
+                display.draw(WIN_BLACK)
+            elif winner == Tile.WHITE:
+                display.draw(WIN_WHITE)
+            else:
+                print(f"[WARNING] Invalid winner: {winner}")
 
 
 def main():
@@ -93,6 +104,7 @@ def main():
         display.draw(RFID_IMAGE)
         print("[INFO] Waiting for RFID card...")
         client_id = rfid_reader.read_uid()
+        print("[INFO] RFID scanned, waiting for other player...")
         # TODO: buzz
         display.draw(WAITING_PLAYER_IMAGE)
 
