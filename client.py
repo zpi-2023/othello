@@ -19,8 +19,10 @@ button_green = Button(button_green_pin)
 encoder = Encoder(encoder_first_pin, encoder_second_pin)
 
 
-def buzzer(state: bool) -> None:
-    GPIO.output(buzzer_pin, not state)
+def buzz(duration_seconds: float) -> None:
+    GPIO.output(buzzer_pin, False)
+    time.sleep(duration_seconds)
+    GPIO.output(buzzer_pin, True)
 
 
 def select_with_encoder(
@@ -89,6 +91,7 @@ def game_loop(channel: ClientChannel, display: Display):
 
             print("[INFO] Placing tile...")
             channel.send_to_server("place", f"{selected_row},{selected_col}")
+            buzz(0.25)
         elif message.tag == "winner":
             winner = Tile(message.content)
             print(f"[INFO] Game finished, winner: {winner}")
@@ -98,6 +101,7 @@ def game_loop(channel: ClientChannel, display: Display):
                 display.draw(WIN_WHITE)
             else:
                 print(f"[WARNING] Invalid winner: {winner}")
+            buzz(5)
 
 
 def main():
@@ -110,10 +114,8 @@ def main():
         print("[INFO] Waiting for RFID card...")
         client_id = rfid_reader.read_uid()
         print("[INFO] RFID scanned, waiting for other player...")
-        buzzer(True)
         display.draw(WAITING_PLAYER_IMAGE)
-        time.sleep(1)
-        buzzer(False)
+        buzz(1)
 
         with ClientChannel(broker_address, client_id) as channel:
             game_loop(channel, display)
