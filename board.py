@@ -2,7 +2,7 @@ from __future__ import annotations
 import re
 from enum import Enum
 from typing import Optional
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 
 BOARD_SIZE = 8
 TILE_SIZE = 8
@@ -62,6 +62,8 @@ class Board:
     def to_image(self, selected_row: Optional[int] = None, selected_col: Optional[int] = None, color: Tile = Tile.EMPTY) -> Image.Image:
         image = Image.new("RGBA", BOARD_IMAGE.size)
         image.paste(BOARD_IMAGE)
+        draw = ImageDraw.Draw(image)
+        font = ImageFont.truetype("./lib/oled/Font.ttf", 20)
 
         # Checkerboard, possible moves and placed tiles
         for r in range(BOARD_SIZE):
@@ -82,10 +84,12 @@ class Board:
 
         # Current turn indicator
         if color != Tile.EMPTY:
-            image.paste(tile_image, (86, 54), tile_image)
+            image.paste(color.image, (86, 54), color.image)
 
         # Current scores
-        # TODO: !!!
+        scores = self.scores()
+        draw.text((0, 0), str(scores[Tile.WHITE]), font)
+        draw.text((0, 0), str(scores[Tile.BLACK]), font)
 
         return image.convert("RGB")
 
