@@ -74,6 +74,7 @@ class Board:
                 elif color != Tile.EMPTY and self._is_move_valid(color, r, c):
                     image.paste(POSSIBLE_TILE_IMAGE, (c * TILE_SIZE, r * TILE_SIZE), POSSIBLE_TILE_IMAGE)
 
+
         # Selected rows, columns
         if selected_row is not None:
             if selected_col is not None:
