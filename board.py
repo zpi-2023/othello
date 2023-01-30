@@ -63,14 +63,16 @@ class Board:
         image = Image.new("RGBA", BOARD_IMAGE.size)
         image.paste(BOARD_IMAGE)
 
+        # Checkerboard, possible moves and placed tiles
         for r in range(BOARD_SIZE):
             for c in range(BOARD_SIZE):
                 tile_image = self._board[r][c].image
                 if tile_image is not None:
                     image.paste(tile_image, (c * TILE_SIZE, r * TILE_SIZE), tile_image)
-                if color != Tile.EMPTY and self._is_move_valid(color, r, c):
+                elif color != Tile.EMPTY and self._is_move_valid(color, r, c):
                     image.paste(POSSIBLE_TILE_IMAGE, (c * TILE_SIZE, r * TILE_SIZE), POSSIBLE_TILE_IMAGE)
 
+        # Selected rows, columns
         if selected_row is not None:
             if selected_col is not None:
                 image.paste(SELECTED_TILE_IMAGE,
@@ -78,7 +80,12 @@ class Board:
             else:
                 image.paste(SELECTED_ROW_IMAGE, (0, selected_row * TILE_SIZE), SELECTED_ROW_IMAGE)
 
-        # TODO: draw scores and something else in the right panel
+        # Current turn indicator
+        if color != Tile.EMPTY:
+            image.paste(tile_image, (86, 54), tile_image)
+
+        # Current scores
+        # TODO: !!!
 
         return image.convert("RGB")
 

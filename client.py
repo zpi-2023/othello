@@ -1,4 +1,5 @@
 import sys
+import time
 from typing import Any, Callable, Optional
 from PIL import Image
 from config import *
@@ -9,10 +10,19 @@ from input_reader import Button, Encoder
 from display import Display
 
 RFID_IMAGE = Image.open("./img/rfid.png").convert("RGB")
+WAITING_PLAYER_IMAGE = Image.open("./img/waiting-player.png").convert("RGB")
+WIN_BLACK = Image.open("./img/win-black.png").convert("RGB")
+WIN_WHITE = Image.open("./img/win-white.png").convert("RGB")
 
 button_red = Button(button_red_pin)
 button_green = Button(button_green_pin)
 encoder = Encoder(encoder_first_pin, encoder_second_pin)
+
+
+def buzz(duration_seconds: float) -> None:
+    GPIO.output(buzzer_pin, False)
+    time.sleep(duration_seconds)
+    GPIO.output(buzzer_pin, True)
 
 
 def select_with_encoder(
@@ -81,6 +91,17 @@ def game_loop(channel: ClientChannel, display: Display):
 
             print("[INFO] Placing tile...")
             channel.send_to_server("place", f"{selected_row},{selected_col}")
+            buzz(0.25)
+        elif message.tag == "winner":
+            winner = Tile(message.content)
+            print(f"[INFO] Game finished, winner: {winner}")
+            if winner == Tile.BLACK:
+                display.draw(WIN_BLACK)
+            elif winner == Tile.WHITE:
+                display.draw(WIN_WHITE)
+            else:
+                print(f"[WARNING] Invalid winner: {winner}")
+            buzz(5)
 
 
 def main():
@@ -92,6 +113,9 @@ def main():
         display.draw(RFID_IMAGE)
         print("[INFO] Waiting for RFID card...")
         client_id = rfid_reader.read_uid()
+        print("[INFO] RFID scanned, waiting for other player...")
+        display.draw(WAITING_PLAYER_IMAGE)
+        buzz(1)
 
         with ClientChannel(broker_address, client_id) as channel:
             game_loop(channel, display)

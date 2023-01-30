@@ -28,7 +28,10 @@ def game_loop(channel: ServerChannel, players: dict[Tile, str]):
         for message in messages:
             if message.tag == "disconnected" and message.sender in players.values:
                 print(f"[INFO] Player ({message.sender}) left the game!")
-                # TODO: game over, second player wins
+                winner = Tile.WHITE if players[Tile.BLACK] == message.sender else Tile.BLACK
+                print(f"[INFO] Game finished, winner: {winner}")
+                channel.broadcast("winner", winner.value)
+                return
 
         print(f"[INFO] Starting {turn}'s turn!")
         print("[INFO] Sending board state...")
@@ -46,7 +49,10 @@ def game_loop(channel: ServerChannel, players: dict[Tile, str]):
         board.place(row, col, turn)
 
         turn = turn.opposite()
-    print(f"[INFO] Game finished, winner: {board.winner()}")
+
+    winner = board.winner()
+    print(f"[INFO] Game finished, winner: {winner}")
+    channel.broadcast("winner", winner.value)
 
 
 def main():
