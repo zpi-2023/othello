@@ -2,7 +2,7 @@ from __future__ import annotations
 import re
 from enum import Enum
 from typing import Optional
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 
 BOARD_SIZE = 8
 TILE_SIZE = 8
@@ -62,6 +62,8 @@ class Board:
     def to_image(self, selected_row: Optional[int] = None, selected_col: Optional[int] = None, color: Tile = Tile.EMPTY) -> Image.Image:
         image = Image.new("RGBA", BOARD_IMAGE.size)
         image.paste(BOARD_IMAGE)
+        draw = ImageDraw.Draw(image)
+        font = ImageFont.truetype("./minecraft_font.ttf", 8)
 
         # Checkerboard, possible moves and placed tiles
         for r in range(BOARD_SIZE):
@@ -86,7 +88,9 @@ class Board:
             image.paste(color.image, (86, 54), color.image)
 
         # Current scores
-        
+        scores = self.scores()
+        draw.text((72, 16), str(scores[Tile.WHITE]), font)
+        draw.text((72, 40), str(scores[Tile.BLACK]), font)
 
         return image.convert("RGB")
 
