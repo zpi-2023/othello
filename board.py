@@ -74,7 +74,6 @@ class Board:
                 elif color != Tile.EMPTY and self._is_move_valid(color, r, c):
                     image.paste(POSSIBLE_TILE_IMAGE, (c * TILE_SIZE, r * TILE_SIZE), POSSIBLE_TILE_IMAGE)
 
-
         # Selected rows, columns
         if selected_row is not None:
             if selected_col is not None:
@@ -363,10 +362,8 @@ class Board:
         score = self.scores()
 
         # 1) the board has no empty tile
-        # 2) none of the players cannot make a valid move
-        if score[Tile.WHITE] + score[Tile.BLACK] == BOARD_SIZE * BOARD_SIZE or not (
-            self.rows_with_valid_moves(Tile.BLACK) or self.rows_with_valid_moves(Tile.WHITE)
-        ):
+        # 2) any of the players cannot make a valid move
+        if score[Tile.WHITE] + score[Tile.BLACK] == BOARD_SIZE * BOARD_SIZE or not self.rows_with_valid_moves(Tile.BLACK) or not self.rows_with_valid_moves(Tile.WHITE):
             return max(score, key=score.get)
 
         # 3) there is only one tile color on the board
