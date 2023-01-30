@@ -89,8 +89,8 @@ class Board:
 
         # Current scores
         scores = self.scores()
-        draw.text((72, 16), str(scores[Tile.WHITE]), font=font, fill="WHITE")
-        draw.text((72, 40), str(scores[Tile.BLACK]), font=font, fill="WHITE")
+        draw.text((67, 14), str(scores[Tile.WHITE]), font=font, fill="WHITE")
+        draw.text((67, 38), str(scores[Tile.BLACK]), font=font, fill="WHITE")
 
         return image.convert("RGB")
 
