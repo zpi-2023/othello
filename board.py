@@ -63,7 +63,7 @@ class Board:
         image = Image.new("RGBA", BOARD_IMAGE.size)
         image.paste(BOARD_IMAGE)
         draw = ImageDraw.Draw(image)
-        font = ImageFont.truetype("./lib/oled/Font.ttf", 8)
+        font = ImageFont.truetype("./minecraft_font.ttf", 8)
 
         # Checkerboard, possible moves and placed tiles
         for r in range(BOARD_SIZE):
