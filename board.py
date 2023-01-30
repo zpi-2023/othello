@@ -63,7 +63,7 @@ class Board:
         image = Image.new("RGBA", BOARD_IMAGE.size)
         image.paste(BOARD_IMAGE)
         draw = ImageDraw.Draw(image)
-        font = ImageFont.truetype("./lib/oled/Font.ttf", 20)
+        font = ImageFont.truetype("./lib/oled/Font.ttf", 8)
 
         # Checkerboard, possible moves and placed tiles
         for r in range(BOARD_SIZE):
@@ -89,8 +89,8 @@ class Board:
 
         # Current scores
         scores = self.scores()
-        draw.text((0, 0), str(scores[Tile.WHITE]), font)
-        draw.text((0, 0), str(scores[Tile.BLACK]), font)
+        draw.text((72, 16), str(scores[Tile.WHITE]), font)
+        draw.text((72, 40), str(scores[Tile.BLACK]), font)
 
         return image.convert("RGB")
 
